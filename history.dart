@@ -50,6 +50,8 @@ class HistoryTracker {
 
 class HistoryEvents extends EventList {
 	get types() => ['change'];
+	
+	EventListeners get change() => this['change'];
 }
 
 
