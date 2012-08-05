@@ -29,4 +29,41 @@ class GenericEvent {
 }
 
 
+class EventHandler {
+	static num totalEvents = 0;
+
+	List<EventRegister> listeners;
+
+	EventHandler()
+	: listeners = new List<EventRegister>();
+
+	void listen(eventListeners, EventListener handler) {
+		EventRegister reg = new EventRegister(eventListeners, handler);
+		reg.add();
+
+		listeners.add(reg);
+
+		totalEvents++;
+	}
+
+	void clear() {
+		for(var reg in listeners) {
+			reg.remove();
+			totalEvents--;
+		}
+		listeners.clear();
+	}
+}
+
+
+class EventRegister {
+	var eventListeners;
+	EventListener handler;
+
+	EventRegister(this.eventListeners, this.handler);
+
+	EventListenerList add()    => eventListeners.add(handler);
+	EventListenerList remove() => eventListeners.remove(handler);
+}
+
 
