@@ -1,7 +1,6 @@
 
 
 class View {
-
 	bool _disposed, entered;
 	Element elem, parent;
 	var model, collection;
@@ -10,14 +9,10 @@ class View {
 
 	EventHandler handler;
 
-	View([this.parent, this.model, this.collection, this.elem, bool render=true])
+	View([this.parent, this.model, this.collection, this.elem])
 	: entered = false,
 	  _disposed = false,
-	  children = new List<View>()
-	{
-		if(render)
-			this.render();
-	}
+	  children = new List<View>();
 
 	void dispose() {
 		if(!_disposed) {
@@ -32,12 +27,17 @@ class View {
 		}
 	}
 
-	void render() {
+	void render(Element container) {
 		if(elem == null)
 			createDom();
+			
+		if(parent == null)
+			parent = container;
+		if(parent == null)
+			throw new NotImplementedException("View should have a parent");
 
 		for(var child in children) {
-			child.render();
+			child.render(elem);
 		}
 
 		enterDocument();

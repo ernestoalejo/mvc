@@ -7,10 +7,13 @@ class Router {
   Element container;
   View view;
 
-  List<RegExp> regexps = <RegExp>[];
-  List<Handler> funcs = <Handler>[];
+  List<RegExp> regexps;
+  List<Handler> funcs;
 
-  Router(this.container) {
+  Router(this.container)
+  : regexps = new List<RegExp>(),
+    funcs = new List<Handler>()
+  {
     container.innerHTML = '';
     new HistoryTracker().on['change'].add(onHistory);
     initRoutes();
@@ -19,7 +22,7 @@ class Router {
   abstract Map<String, Handler> get routes();
 
   void onHistory(HistoryChangeEvent event) {
-    if(view == null) {
+    if(view != null) {
       view.dispose();
       view = null;
     }
@@ -36,18 +39,22 @@ class Router {
       view = funcs[i](groups);
       if(view == null)
         throw new NotImplementedException("Handler didn't returned a view");
+        
+      view.render(container);
+      return;
     }
 
     throw new NotImplementedException("Page not found");
   }
 
-  RegExp initRoutes() {
-    for(var route in routes.getKeys()) {
+  void initRoutes() {
+    for(String route in routes.getKeys()) {
       List<String> parts = route.split('/').map((chunk) {
         return chunk.startsWith(':') ? '([^/]+)' : chunk;
       });
 
-      return new RegExp(Strings.join(parts, '/'));
+      regexps.add(new RegExp(Strings.join(parts, '/'))) ;
+      funcs.add(routes[route]);
     }
   }
 }

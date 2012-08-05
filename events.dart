@@ -1,7 +1,11 @@
 
 
 class EventListeners {
-	List<Function> listeners = [];
+	List<Function> listeners;
+
+	EventListeners()
+	: listeners = new List<Function>();
+
 	void add(Function handler) => listeners.add(handler);
 	void dispatch(GenericEvent event) => listeners.forEach((fn) => fn(event));
 }
@@ -10,7 +14,9 @@ class EventListeners {
 class EventList {
 	Map<String, EventListeners> listeners;
 
-	EventList() {
+	EventList()
+	: listeners = new Map<String, EventListeners>()
+	{
 		types.forEach((t) {
 			listeners[t] = new EventListeners();
 		});

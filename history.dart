@@ -12,7 +12,9 @@ class HistoryTracker {
 	HistoryEvents on;
 	String url;
 
-	HistoryTracker._internal() {
+	HistoryTracker._internal()
+	: on = new HistoryEvents()
+	{
 		// Intercept link clicks and dispatch route events.
 		// If it's meant to be a real link (or processed in any other way)
 		// mark it with data-history="server".
