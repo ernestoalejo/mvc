@@ -12,7 +12,8 @@ class View {
 	View([this.parent, this.model, this.collection, this.elem])
 	: entered = false,
 	  _disposed = false,
-	  children = new List<View>();
+	  children = new List<View>(),
+	  handler = new EventHandler();
 
 	void dispose() {
 		if(!_disposed) {
