@@ -22,25 +22,31 @@ class Router {
   abstract Map<String, Handler> get routes();
 
   void onHistory(HistoryChangeEvent event) {
+    // Dispose the old view
     if(view != null) {
       view.dispose();
       view = null;
     }
 
     for(var i = 0; i < regexps.length; i++) {
+      // Try to match the URL against the pattern
       Match params = regexps[i].firstMatch(event.url);
       if(params == null)
         continue;
 
+      // Extract the variables from the URL
       List<String> groups;
       for(var j = 0; j < params.groupCount(); j++)
         groups.add(params[j]);
 
+      // Call the handler to create the view
       view = funcs[i](groups);
       if(view == null)
         throw new NotImplementedException("Handler didn't returned a view");
         
+      // Render the view
       view.render(container);
+
       return;
     }
 
@@ -48,6 +54,7 @@ class Router {
   }
 
   void initRoutes() {
+    // Convert each URL to a RegExp replacing the variables
     for(String route in routes.getKeys()) {
       List<String> parts = route.split('/').map((chunk) {
         return chunk.startsWith(':') ? '([^/]+)' : chunk;
@@ -56,5 +63,8 @@ class Router {
       regexps.add(new RegExp(Strings.join(parts, '/'))) ;
       funcs.add(routes[route]);
     }
+
+    // Throw the first history event with the loaded path
+    onHistory(new HistoryChangeEvent(window.location.pathname));
   }
 }
