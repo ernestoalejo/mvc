@@ -1,7 +1,7 @@
 
 
 class View {
-	bool _disposed, entered;
+	bool _disposed, inDocument;
 	Element elem, parent;
 	var model, collection;
 
@@ -10,7 +10,7 @@ class View {
 	EventHandler handler;
 
 	View([this.parent, this.model, this.collection, this.elem])
-	: entered = false,
+	: inDocument = false,
 	  _disposed = false,
 	  children = new List<View>(),
 	  handler = new EventHandler();
@@ -37,6 +37,8 @@ class View {
 		if(parent == null)
 			throw new NotImplementedException("View should have a parent");
 
+		parent.nodes.add(elem);
+
 		for(var child in children) {
 			child.render(elem);
 		}
@@ -49,8 +51,9 @@ class View {
 	}
 
 	void enterDocument() {
-		if(entered)
+		if(inDocument)
 			return;
+
 		if(elem == null)
 			throw new NotImplementedException("Element should be assigned");
 
@@ -58,15 +61,15 @@ class View {
 			child.enterDocument();
 		}
 
-		bindEvents();
+		bindEvents(events);
 
-		entered = true;
-
-		if(parent != null && parent != elem)
-			parent.nodes.add(elem);
+		inDocument = true;
 	}
 
 	void exitDocument() {
+		if(!inDocument)
+			return;
+
 		if(elem != null)
 			elem.remove();
 
@@ -76,7 +79,7 @@ class View {
 
 		handler.clear();
 
-		entered = false;
+		inDocument = false;
 	}
 
 	void disposeInternal() {
@@ -84,11 +87,11 @@ class View {
 
 	Map<String, EventListener> get events() => null;
 
-	void bindEvents() {
-		if(events == null)
+	void bindEvents(Map<String, EventListener> ev) {
+		if(ev == null)
 			return;
 
-		events.forEach((k, v) {
+		ev.forEach((k, v) {
 			var parts = k.split(' ');
 			if(parts.length > 2) {
 				print('Invalid event: $k');
@@ -98,11 +101,11 @@ class View {
 			String type;
 			List<Element> targets;
 			if(parts.length == 1) {
-				targets = <Element>[elem];
 				type = parts[0];
+				targets = <Element>[elem];
 			} else {
-				targets = document.queryAll(parts[0]);
-				type = parts[1];
+				type = parts[0];
+				targets = elem.queryAll(parts[1]);
 			}
 
 			if(targets.length == 0) {
@@ -114,5 +117,10 @@ class View {
 				handler.listen(target.on[type], v);
 			}
 		});
+	}
+
+	void addChildren(View view) {
+		children.add(view);
+		view.render(elem);
 	}
 }
