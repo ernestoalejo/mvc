@@ -4,6 +4,8 @@ typedef View Handler(List<String> params);
 
 
 class Router {
+  static String NOT_FOUND_HANDLER = "[error]";
+
   Element container;
   View view;
 
@@ -28,18 +30,22 @@ class Router {
       view = null;
     }
 
+    var notFoundHandler = "^$NOT_FOUND_HANDLER\$";
+
     for(var i = 0; i < regexps.length; i++) {
-      // Try to match the URL against the pattern
-      Match params = regexps[i].firstMatch(event.url);
-      if(params == null)
-        continue;
+      List<String> groups;
+      if(regexps[i].pattern != notFoundHandler) {
+        // Try to match the URL against the pattern
+        Match params = regexps[i].firstMatch(event.url);
+        if(params == null)
+          continue;
+
+        // Extract the variables from the URL
+        for(var j = 0; j < params.groupCount(); j++)
+          groups.add(params[j]);
+      }
 
       found(event.url);
-
-      // Extract the variables from the URL
-      List<String> groups;
-      for(var j = 0; j < params.groupCount(); j++)
-        groups.add(params[j]);
 
       // Call the handler to create the view
       view = funcs[i](groups);
@@ -62,12 +68,9 @@ class Router {
         return chunk.startsWith(':') ? '([^/]+)' : chunk;
       });
 
-      regexps.add(new RegExp(Strings.join(parts, '/'))) ;
+      regexps.add(new RegExp("^${Strings.join(parts, '/')}\$")) ;
       funcs.add(routes[route]);
     }
-
-    // Throw the first history event with the loaded path
-    onHistory(new HistoryChangeEvent(window.location.pathname));
   }
 
   void found(String url) { }

@@ -38,8 +38,10 @@ class HistoryTracker {
 		});
 
 		// Dispatch the first history event with the current state
-		url = window.location.pathname;
-		on['change'].dispatch(new HistoryChangeEvent(url));
+		window.setTimeout(() {
+			url = window.location.pathname;
+			on['change'].dispatch(new HistoryChangeEvent(url));
+		}, 0);
 	}
 
 	void changeUrl(String newUrl) {
