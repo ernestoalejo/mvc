@@ -34,6 +34,8 @@ class Router {
       if(params == null)
         continue;
 
+      found(event.url);
+
       // Extract the variables from the URL
       List<String> groups;
       for(var j = 0; j < params.groupCount(); j++)
@@ -50,7 +52,7 @@ class Router {
       return;
     }
 
-    throw new NotImplementedException("Page not found");
+    notFound(event.url);
   }
 
   void initRoutes() {
@@ -66,5 +68,11 @@ class Router {
 
     // Throw the first history event with the loaded path
     onHistory(new HistoryChangeEvent(window.location.pathname));
+  }
+
+  void found(String url) { }
+
+  void notFound(String url) {
+    throw new NotImplementedException("Page not found: $url");
   }
 }
