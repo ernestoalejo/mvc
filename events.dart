@@ -7,6 +7,9 @@ class EventListeners {
 	: listeners = new List<Function>();
 
 	void add(Function handler) => listeners.add(handler);
+	void remove(Function handler) {
+		listeners = listeners.filter((x) => x != handler);		
+	}
 	void dispatch(GenericEvent event) => listeners.forEach((fn) => fn(event));
 }
 
@@ -36,6 +39,7 @@ class GenericEvent {
 
 
 class EventHandler {
+	static bool debugMode = false;
 	static num totalEvents = 0;
 
 	List<EventRegister> listeners;
