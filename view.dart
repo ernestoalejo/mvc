@@ -136,7 +136,19 @@ class View {
 	}
 
 	void addChildren(View view) {
+		addChild(view);
+	}
+
+	void addChild(View view) {
 		children.add(view);
 		view.render(elem);
+	}
+
+	void removeChild(View view) {
+		for(num i = 0; i < children.length; i++) {
+			children[i].exitDocument();
+			children[i].dispose();
+			children.removeRange(i, 1);
+		}
 	}
 }

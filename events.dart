@@ -47,7 +47,7 @@ class EventHandler {
 	EventHandler()
 	: listeners = new List<EventRegister>();
 
-	void listen(eventListeners, EventListener handler) {
+	void listen(eventListeners, Function handler) {
 		EventRegister reg = new EventRegister(eventListeners, handler);
 		reg.add();
 
@@ -68,7 +68,7 @@ class EventHandler {
 
 class EventRegister {
 	var eventListeners;
-	EventListener handler;
+	Function handler;
 
 	EventRegister(this.eventListeners, this.handler);
 

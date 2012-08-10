@@ -125,7 +125,7 @@ class ModelEvents extends EventList {
 	get types() => ['load', 'update', 'delete', 'error', 'change', 'create'];
 
 	EventListeners get load()   => this['load'];
-	EventListeners get update()   => this['update'];
+	EventListeners get update() => this['update'];
 	EventListeners get delete() => this['delete'];
 	EventListeners get error()  => this['error'];
 	EventListeners get change() => this['change'];
