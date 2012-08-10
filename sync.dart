@@ -12,9 +12,10 @@ class Sync {
 		return _INSTANCE;
 	}
 
-	SyncFunc rpc = defaultRpc;
+	SyncFunc rpc;
 
-	Sync._internal();
+	Sync._internal()
+	: rpc = defaultRpc;
 }
 
 Future defaultRpc(String method, String url, Map<String, Dynamic> data) {

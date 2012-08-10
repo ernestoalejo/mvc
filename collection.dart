@@ -6,9 +6,12 @@ class ModelCollection<M extends Model> {
 	String url;
 	List<M> models;
 
+	bool loaded;
+
 	ModelCollection()	
 	: onModel = new ModelEvents(),
-	  url = "";
+	  url = "",
+	  loaded = false;
 
 	abstract M builder(Map<String, Dynamic> attrs);
 
@@ -17,6 +20,8 @@ class ModelCollection<M extends Model> {
 	}
 
 	void load() {
+		loaded = false;
+
 		if(url == "")
 			throw new NotImplementedException("URL should be assigned");
 
@@ -28,6 +33,8 @@ class ModelCollection<M extends Model> {
 		call.then((resp) {
 			if(hasItems)
 				models = [];
+
+			loaded = true;
 
 			for(var item in resp) {
 				M model = builder(item);

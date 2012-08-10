@@ -6,14 +6,18 @@ class Model {
 	ModelEvents on;
 	ModelCollection collection;
 
+	bool loaded;
+
+	String id;
+
 	Model([Map<String, Dynamic> attrs])
 	: attributes = new Map<String, Dynamic>(),
-	  url = ""
+	  url = "",
+	  loaded = false,
+	  on = new ModelEvents()
 	{
 		setValues(attrs);
 	}
-
-	String get id() => this['id'];
 
 	Dynamic operator[](String key) {
 		return attributes[key];
@@ -25,7 +29,11 @@ class Model {
 		setValues(data);
 	}
 
-	void load() {
+	void load([bool reload = true]) {
+		if(loaded && !reload)
+			return;
+
+		loaded = false;
 		rpc('load', 'GET', '$url/$id', null);
 	}
 
@@ -55,6 +63,9 @@ class Model {
 			return true;
 		});
 		call.then((resp) {
+			if(type == 'load')
+				loaded = true;
+
 			setValues(resp);
 
 			var event = new ModelRpcEvent(type, this);
@@ -83,7 +94,7 @@ class Model {
 		on.change.dispatch(event);
 	}
 
-	void noSuchMethod(String name, List args) {
+	noSuchMethod(String name, List args) {
 		if(name.startsWith('set:')) {
 			String key = name.split(":")[1];
 			if(attributes.containsKey(key)) {
@@ -100,6 +111,9 @@ class Model {
 			String key = name.split(':')[1];
 			if(attributes.containsKey(key))
 				return attributes[key];
+		} else if(name.startsWith('init:')) {
+			String key = name.split(':')[1];
+			return attributes[key] = args[0];
 		}
 
 		throw new NoSuchMethodException(this, name, args);

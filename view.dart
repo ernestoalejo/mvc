@@ -85,9 +85,9 @@ class View {
 	void disposeInternal() {
 	}
 
-	Map<String, EventListener> get events() => null;
+	Map<String, Function> get events() => null;
 
-	void bindEvents(Map<String, EventListener> ev) {
+	void bindEvents(Map<String, Function> ev) {
 		if(ev == null)
 			return;
 
@@ -98,14 +98,25 @@ class View {
 				throw new WrongArgumentCountException();
 			}
 
+			bool isLoad = false;
+
 			String type;
-			List<Element> targets;
+			List targets;
 			if(parts.length == 1) {
 				type = parts[0];
-				targets = <Element>[elem];
+				targets = [elem];
 			} else {
 				type = parts[0];
-				targets = elem.queryAll(parts[1]);
+
+				if(parts[1] == "model")
+					targets = [model];
+				else if(parts[1] == "collection")
+					targets = [collection];
+				else
+					targets = elem.queryAll(parts[1]);
+
+				isLoad = (parts[1] == "model" || parts[1] == "collection") &&
+						type == 'load';
 			}
 
 			if(targets.length == 0) {
@@ -115,6 +126,11 @@ class View {
 
 			for(var target in targets) {
 				handler.listen(target.on[type], v);
+			}
+
+			if(isLoad) {
+				if(targets[0].loaded)
+					v(new ModelRpcEvent('load', targets[0]));
 			}
 		});
 	}
