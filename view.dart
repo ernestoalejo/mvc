@@ -3,13 +3,13 @@
 class View {
 	bool _disposed, inDocument;
 	Element elem, parent;
-	var model, collection;
+	//var model, collection;
 
 	List<View> children;
 
 	EventHandler handler;
 
-	View([this.parent, this.model, this.collection, this.elem])
+	View([this.parent, this.elem])
 	: inDocument = false,
 	  _disposed = false,
 	  children = new List<View>(),
@@ -101,8 +101,6 @@ class View {
 				throw new WrongArgumentCountException();
 			}
 
-			bool isLoad = false;
-
 			String type;
 			List targets;
 			if(parts.length == 1) {
@@ -111,19 +109,12 @@ class View {
 			} else {
 				type = parts[0];
 
-				if(parts[1] == "model")
-					targets = [model];
-				else if(parts[1] == "collection")
-					targets = [collection];
-				else if(parts[1] == "document")
+				if(parts[1] == "document")
 					targets = [document];
 				else if(parts[1] == "window")
 					targets = [window];
 				else
 					targets = elem.queryAll(parts[1]);
-
-				isLoad = (parts[1] == "model" || parts[1] == "collection") &&
-						type == 'load';
 			}
 
 			if(targets.length == 0) {
@@ -133,11 +124,6 @@ class View {
 
 			for(var target in targets) {
 				handler.listen(target.on[type], v);
-			}
-
-			if(isLoad) {
-				if(targets[0].loaded)
-					v(new ModelRpcEvent('load', targets[0]));
 			}
 		});
 	}
