@@ -112,6 +112,10 @@ class View {
 					targets = [model];
 				else if(parts[1] == "collection")
 					targets = [collection];
+				else if(parts[1] == "document")
+					targets = [document];
+				else if(parts[1] == "window")
+					targets = [window];
 				else
 					targets = elem.queryAll(parts[1]);
 
