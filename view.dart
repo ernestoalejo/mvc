@@ -24,6 +24,9 @@ class View {
 				child.dispose();
 			}
 
+			if(elem != null)
+				elem.remove();
+
 			_disposed = true;
 		}
 	}
@@ -150,9 +153,11 @@ class View {
 
 	void removeChild(View view) {
 		for(num i = 0; i < children.length; i++) {
-			children[i].exitDocument();
-			children[i].dispose();
-			children.removeRange(i, 1);
+			if(children[i] == view) {
+				children[i].exitDocument();
+				children[i].dispose();
+				children.removeRange(i, 1);
+			}
 		}
 	}
 }

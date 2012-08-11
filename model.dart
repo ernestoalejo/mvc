@@ -84,7 +84,9 @@ class Model {
 			if(attributes.containsKey(k)) {
 				attributes[k] = v;
 				keys.add(k);
-			} else
+			} else if(k == "Id")
+				id = v;
+			else
 				noSuchMethod('init:$k', [v]);
 		});
 
