@@ -3,7 +3,6 @@
 class View {
 	bool _disposed, inDocument;
 	Element elem, parent;
-	//var model, collection;
 
 	List<View> children;
 
@@ -63,9 +62,7 @@ class View {
 		for(var child in children) {
 			child.enterDocument();
 		}
-
-		bindEvents(events);
-
+		
 		inDocument = true;
 	}
 
@@ -85,48 +82,7 @@ class View {
 		inDocument = false;
 	}
 
-	void disposeInternal() {
-	}
-
-	Map<String, Function> get events() => null;
-
-	void bindEvents(Map<String, Function> ev) {
-		if(ev == null)
-			return;
-
-		ev.forEach((k, v) {
-			var parts = k.split(' ');
-			if(parts.length > 2) {
-				print('Invalid event: $k');
-				throw new WrongArgumentCountException();
-			}
-
-			String type;
-			List targets;
-			if(parts.length == 1) {
-				type = parts[0];
-				targets = [elem];
-			} else {
-				type = parts[0];
-
-				if(parts[1] == "document")
-					targets = [document];
-				else if(parts[1] == "window")
-					targets = [window];
-				else
-					targets = elem.queryAll(parts[1]);
-			}
-
-			if(targets.length == 0) {
-				print("No elements match $k");
-				throw new WrongArgumentCountException();
-			}
-
-			for(var target in targets) {
-				handler.listen(target.on[type], v);
-			}
-		});
-	}
+	void disposeInternal() { }
 
 	void addChildren(View view) {
 		addChild(view);
