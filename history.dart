@@ -19,11 +19,18 @@ class HistoryTracker {
 		// If it's meant to be a real link (or processed in any other way)
 		// mark it with data-history="server".
 		document.body.on.click.add((event) {
+			var checkLink = (Element elem) {
+				if(elem.tagName == "A" && elem.attributes['data-history'] != "server") {
+					event.preventDefault();
+					changeUrl(elem.attributes['href']);
+					return true;
+				}
+				return false;
+			};
+
 			Element elem = event.target;
-			if(elem.tagName == "A" && elem.attributes['data-history'] != "server") {
-				event.preventDefault();
-				changeUrl(elem.attributes['href']);
-			}
+			if(!checkLink(elem) && elem.parent != null)
+				checkLink(elem.parent);
 		});
 
 		// Receive changes in the history
