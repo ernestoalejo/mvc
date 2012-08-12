@@ -10,10 +10,12 @@ class ModelCollection<M extends Model> {
 
 	ModelCollection()	
 	: onModel = new ModelEvents(),
+	  on = new CollectionEvents(),
 	  url = "",
-	  loaded = false;
+	  loaded = false,
+	  models = new List<M>();
 
-	abstract M builder(Map<String, Dynamic> attrs);
+	abstract M builder();
 
 	M operator[](int index) {
 		return models[index];
@@ -37,9 +39,10 @@ class ModelCollection<M extends Model> {
 			loaded = true;
 
 			for(var item in resp) {
-				M model = builder(item);
-				models.add(item);
-				item.collection = this;
+				M model = builder();
+				model.setValues(item);
+				model.collection = this;
+				models.add(model);
 			}
 			on.load.dispatch(null);
 			on.change.dispatch(null);
