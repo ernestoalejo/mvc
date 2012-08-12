@@ -26,14 +26,14 @@ class Router {
   void onHistory(HistoryChangeEvent event) {
     // Dispose the old view
     if(view != null) {
-      if(EventHandler.debugMode)
-        print('Before dispose: ${EventHandler.totalEvents}');
+      if(events.debugMode)
+        print('Before dispose: ${events.totalEvents}');
 
       view.dispose();
       view = null;
 
-      if(EventHandler.debugMode)
-        print('After dispose: ${EventHandler.totalEvents}');
+      if(events.debugMode)
+        print('After dispose: ${events.totalEvents}');
     }
 
     var notFoundHandler = "^$NOT_FOUND_HANDLER\$";
@@ -61,8 +61,8 @@ class Router {
       // Render the view
       view.render(container);
 
-      if(EventHandler.debugMode)
-        print('After render: ${EventHandler.totalEvents}');
+      if(events.debugMode)
+        print('After render: ${events.totalEvents}');
 
       return;
     }
